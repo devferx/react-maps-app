@@ -1,5 +1,5 @@
 import { useCallback, useReducer } from "react";
-import type { Map } from "mapbox-gl";
+import { Marker, type Map, Popup } from "mapbox-gl";
 
 import { MapContext } from "./MapContext";
 import { mapReducer } from "./MapReducer";
@@ -19,6 +19,17 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
 
   const setMap = useCallback(
     (map: Map) => {
+      const myLocationPopup = new Popup().setHTML(`
+      <h4>Aquí estoy</h4>
+      <p>En algún lugar del mundo</p>
+      `);
+
+      new Marker({
+        color: "#5859DF",
+      })
+        .setLngLat(map.getCenter())
+        .setPopup(myLocationPopup)
+        .addTo(map);
       dispatch({
         type: "setMap",
         payload: map,
