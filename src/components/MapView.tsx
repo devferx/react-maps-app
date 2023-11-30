@@ -13,11 +13,11 @@ export const MapView = () => {
       new mapboxgl.Map({
         container: mapDiv.current,
         style: "mapbox://styles/mapbox/streets-v12", // style URL
-        center: [-74.5, 40], // starting position [lng, lat]
-        zoom: 9, // starting zoom
+        center: userLocation, // starting position [lng, lat]
+        zoom: 16, // starting zoom
       });
     }
-  }, [isLoading]);
+  }, [isLoading, userLocation]);
 
   if (isLoading) {
     return <Loading />;
