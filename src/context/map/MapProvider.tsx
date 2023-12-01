@@ -73,12 +73,20 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
     [dispatch]
   );
 
+  const getRoutesBeetweenPoints = async (
+    start: [number, number],
+    end: [number, number]
+  ) => {
+    console.log("getRoutesBeetweenPoints");
+  };
+
   return (
     <MapContext.Provider
       value={{
         ...state,
 
         setMap,
+        getRoutesBeetweenPoints,
       }}
     >
       {children}
