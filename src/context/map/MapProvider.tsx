@@ -1,9 +1,12 @@
 import { useCallback, useContext, useEffect, useReducer } from "react";
 import { Marker, Popup, type Map } from "mapbox-gl";
 
+import { directionsApi } from "../../apis";
+
 import { MapContext } from "./MapContext";
 import { mapReducer } from "./MapReducer";
 import { PlacesContext } from "..";
+import { DirectionsResponse } from "../../interfaces/directions";
 
 export interface MapState {
   isMapReady: boolean;
@@ -77,7 +80,18 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
     start: [number, number],
     end: [number, number]
   ) => {
-    console.log("getRoutesBeetweenPoints");
+    const resp = await directionsApi.get<DirectionsResponse>(
+      `/${start.join(",")};${end.join(",")}`
+    );
+
+    const { distance, duration, geometry } = resp.data.routes[0];
+    let kms = distance / 1000;
+    kms = Math.round(kms * 100);
+    kms /= 100;
+
+    const minutes = Math.round(duration / 60);
+
+    console.log({ kms, minutes });
   };
 
   return (

@@ -4,8 +4,8 @@ import { LoadingPlaces } from ".";
 import { Feature } from "../interfaces/places";
 
 export const SearchResults = () => {
-  const { places, isLoadingPlaces } = useContext(PlacesContext);
-  const { map } = useContext(MapContext);
+  const { places, isLoadingPlaces, userLocation } = useContext(PlacesContext);
+  const { map, getRoutesBeetweenPoints } = useContext(MapContext);
 
   const [activeId, setActiveId] = useState("");
 
@@ -19,6 +19,13 @@ export const SearchResults = () => {
       zoom: 14,
       center: [lng, lat],
     });
+  };
+
+  const getRoute = (place: Feature) => {
+    if (!userLocation) return;
+
+    const [lng, lat] = place.center;
+    getRoutesBeetweenPoints(userLocation, [lng, lat]);
   };
 
   return (
@@ -39,6 +46,7 @@ export const SearchResults = () => {
                 ? "btn-outline-light"
                 : "btn-outline-primary"
             }`}
+            onClick={() => getRoute(place)}
           >
             Direcciones
           </button>
