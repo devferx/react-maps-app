@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { PlacesContext } from "../context";
+import { SearchResults } from "./";
 
 export const SearchBar = () => {
   const { searchPlacesByTerm } = useContext(PlacesContext);
@@ -21,6 +22,7 @@ export const SearchBar = () => {
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
       />
+      <SearchResults />
     </div>
   );
 };
