@@ -1,5 +1,11 @@
 import { useCallback, useContext, useEffect, useReducer } from "react";
-import { Marker, Popup, type Map } from "mapbox-gl";
+import {
+  Marker,
+  Popup,
+  type Map,
+  LngLatBounds,
+  AnySourceData,
+} from "mapbox-gl";
 
 import { directionsApi } from "../../apis";
 
@@ -45,8 +51,6 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
       newMarkers.push(newMarker);
     }
 
-    // TODO: clear polylines
-
     dispatch({
       type: "setMarkers",
       payload: newMarkers,
@@ -85,13 +89,69 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     const { distance, duration, geometry } = resp.data.routes[0];
+    const { coordinates: coords } = geometry;
+
     let kms = distance / 1000;
     kms = Math.round(kms * 100);
     kms /= 100;
 
     const minutes = Math.round(duration / 60);
-
     console.log({ kms, minutes });
+
+    const bounds = new LngLatBounds(start, start);
+
+    for (const coord of coords) {
+      const newCoord: [number, number] = [coord[0], coord[1]];
+      bounds.extend(newCoord);
+    }
+
+    state.map?.fitBounds(bounds, {
+      padding: {
+        top: 200,
+        bottom: 200,
+        left: 350,
+        right: 200,
+      },
+    });
+
+    // Polyline
+    const sourceData: AnySourceData = {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              type: "LineString",
+              coordinates: coords,
+            },
+          },
+        ],
+      },
+    };
+
+    if (state.map?.getLayer("RouteString")) {
+      state.map?.removeLayer("RouteString");
+      state.map?.removeSource("RouteString");
+    }
+
+    state.map?.addSource("RouteString", sourceData);
+
+    state.map?.addLayer({
+      id: "RouteString",
+      type: "line",
+      source: "RouteString",
+      layout: {
+        "line-cap": "round",
+        "line-join": "round",
+      },
+      paint: {
+        "line-color": "#5859DF",
+        "line-width": 5,
+      },
+    });
   };
 
   return (
