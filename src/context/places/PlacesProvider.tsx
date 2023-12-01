@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 
 import { PlacesContext } from "./PlacesContext";
 import { placesReducer } from "./placesReducer";
