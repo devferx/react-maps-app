@@ -11,7 +11,7 @@ export const BtnMyLocation = () => {
 
     map?.flyTo({
       center: userLocation,
-      zoom: 16,
+      zoom: 14,
     });
   };
   return (
