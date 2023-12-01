@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 
 import { searchApi } from "../../apis";
 
@@ -33,21 +33,24 @@ export const PlacesProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }, []);
 
-  const searchPlacesByTerm = async (query: string): Promise<Feature[]> => {
-    if (query.length === 0) return [];
-    if (!state.userLocation) throw new Error("No hay ubicación del usuario");
+  const searchPlacesByTerm = useCallback(
+    async (query: string): Promise<Feature[]> => {
+      if (query.length === 0) return [];
+      if (!state.userLocation) throw new Error("No hay ubicación del usuario");
 
-    dispatch({ type: "setLoadingPlaces" });
+      dispatch({ type: "setLoadingPlaces" });
 
-    const resp = await searchApi.get<PlacesResponse>(`/${query}.json`, {
-      params: {
-        proximity: state.userLocation.join(","),
-      },
-    });
+      const resp = await searchApi.get<PlacesResponse>(`/${query}.json`, {
+        params: {
+          proximity: state.userLocation.join(","),
+        },
+      });
 
-    dispatch({ type: "setPlaces", payload: resp.data.features });
-    return resp.data.features;
-  };
+      dispatch({ type: "setPlaces", payload: resp.data.features });
+      return resp.data.features;
+    },
+    [state.userLocation]
+  );
 
   return (
     <PlacesContext.Provider

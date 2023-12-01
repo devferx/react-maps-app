@@ -28,13 +28,13 @@ export function placesReducer(
     case "setLoadingPlaces":
       return {
         ...state,
-        isLoading: true,
+        isLoadingPlaces: true,
         places: [],
       };
     case "setPlaces":
       return {
         ...state,
-        isLoading: false,
+        isLoadingPlaces: false,
         places: action.payload,
       };
     default:
